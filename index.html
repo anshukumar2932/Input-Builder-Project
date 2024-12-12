@@ -105,7 +105,6 @@
                 transform: translateY(0);
             }
         }
-
     </style>
 </head>
 <body>
@@ -135,6 +134,14 @@
             <option value="STO-3G">STO-3G</option>
             <option value="6-31G*">6-31G*</option>
             <option value="aug-cc-pVDZ">aug-cc-pVDZ</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="type">Type:</label>
+        <select id="type">
+            <option value="Energy">Energy</option>
+            <option value="Geometry">Geometry</option>
         </select>
     </div>
 
@@ -170,6 +177,7 @@
             const mult = document.getElementById("mult").value;
             const charge = document.getElementById("charge").value;
             const basis = document.getElementById("basis").value;
+            const type = document.getElementById("type").value;
 
             let basisContent = "";
             if (basis === "STO-3G") {
@@ -183,12 +191,22 @@
                 return;
             }
 
+            let typeContent = "";
+            if (type === "Energy") {
+                typeContent = "ENERGY";
+            } else if (type === "Geometry") {
+                typeContent = "OPTIMIZE";
+            } else {
+                alert("Invalid basis selected.");
+                return;
+            }
+
             if (!fileData) {
                 alert("No file selected. Please select a file before saving.");
                 return;
             }
 
-            const template = `$CONTRL SCFTYP=${scftyp} MAXIT=200 RUNTYP=ENERGY
+            const template = `$CONTRL SCFTYP=${scftyp} MAXIT=200 RUNTYP=${typeContent}
 COORD=UNIQUE MULT=${mult} 
 ICHARG=${charge}  
 $END
@@ -208,7 +226,6 @@ $END`;
             successMessage.innerText = "Data saved to data.txt!";
             successMessage.style.display = "block";
         }
-
     </script>
 </body>
 </html>
