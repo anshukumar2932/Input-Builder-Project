@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Filler</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 0;
+            background: linear-gradient(to bottom, #ffffff, #f0f8ff);
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4b0082;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #4b0082;
+            box-shadow: 0 0 8px rgba(75, 0, 130, 0.5);
+            outline: none;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            background-color: #e2e6ea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background: linear-gradient(to right, #6a5acd, #4b0082);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #4b0082, #6a5acd);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            background: linear-gradient(to right, #483d8b, #4b0082);
+            transform: translateY(1px);
+        }
+
+        #successMessage {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(to right, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 1px solid #155724;
+            border-radius: 6px;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Data Filler</h1>
+
+    <div class="form-group">
+        <label for="scftyp">SCFTYP:</label>
+        <select id="scftyp">
+            <option value="RHF">RHF</option>
+            <option value="UHF">UHF</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="mult">Multiplicity:</label>
+        <input type="number" id="mult" value="1" min="1">
+    </div>
+
+    <div class="form-group">
+        <label for="charge">Charge:</label>
+        <input type="number" id="charge" value="1" min="0">
+    </div>
+
+    <div class="form-group">
+        <label for="basis">Basis:</label>
+        <select id="basis">
+            <option value="STO-3G">STO-3G</option>
+            <option value="6-31G*">6-31G*</option>
+            <option value="aug-cc-pVDZ">aug-cc-pVDZ</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="fileInput">Select a File (.xyz):</label>
+        <input type="file" id="fileInput" accept=".xyz">
+    </div>
+
+    <button onclick="generateData()">Generate Data</button>
+
+    <div id="successMessage"></div>
+
+    <script>
+        let fileData = "";
+
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    fileData = e.target.result.trim();
+                    alert('File loaded successfully.');
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function generateData() {
+            const scftyp = document.getElementById("scftyp").value;
+            const mult = document.getElementById("mult").value;
+            const charge = document.getElementById("charge").value;
+            const basis = document.getElementById("basis").value;
+
+            let basisContent = "";
+            if (basis === "STO-3G") {
+                basisContent = "$BASIS  GBASIS=N31 NGAUSS=6\nNDFUNC=1   NPFUNC=0  $END";
+            } else if (basis === "6-31G*") {
+                basisContent = "$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END";
+            } else if (basis === "aug-cc-pVDZ") {
+                basisContent = "$BASIS GBASIS=ACCD $END";
+            } else {
+                alert("Invalid basis selected.");
+                return;
+            }
+
+            if (!fileData) {
+                alert("No file selected. Please select a file before saving.");
+                return;
+            }
+
+            const template = `$CONTRL SCFTYP=${scftyp} MAXIT=200 RUNTYP=ENERGY
+COORD=UNIQUE MULT=${mult} 
+ICHARG=${charge}  
+$END
+$SYSTEM TIMLIM=2879 MWORDS=250 $END
+${basisContent}
+$DATA
+${fileData}
+$END`;
+
+            const blob = new Blob([template], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'data.txt';
+            a.click();
+
+            const successMessage = document.getElementById("successMessage");
+            successMessage.innerText = "Data saved to data.txt!";
+            successMessage.style.display = "block";
+        }
+
+    </script>
+</body>
+</html>
