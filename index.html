@@ -155,7 +155,10 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    fileData = e.target.result.trim();
+                    const fileContent = e.target.result.trim();
+                    const lines = fileContent.split('\n');
+                    // Skip the first two lines
+                    fileData = lines.slice(2).join('\n');
                     alert('File loaded successfully.');
                 };
                 reader.readAsText(file);
