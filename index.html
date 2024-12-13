@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Filler</title>
+    <title>Input Builder</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -108,7 +108,7 @@
     </style>
 </head>
 <body>
-    <h1>Data Filler</h1>
+    <h1>Input Builder</h1>
 
     <div class="form-group">
         <label for="scftyp">SCFTYP:</label>
@@ -134,6 +134,11 @@
             <option value="STO-3G">STO-3G</option>
             <option value="6-31G*">6-31G*</option>
             <option value="aug-cc-pVDZ">aug-cc-pVDZ</option>
+            <option value="AM1">AM1</option>
+            <option value="PM3">PM3</option>
+            <option value="PM6">PM6</option>
+            <option value="N311">N311</option>       
+
         </select>
     </div>
 
@@ -142,6 +147,25 @@
         <select id="type">
             <option value="Energy">Energy</option>
             <option value="Optimization">Optimization</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="ADD ONS">ADD ONS:</label>
+        <select id="ADD ONS">
+            <option value="NONE">NONE</option>
+            <option value="IR">IR</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="DFTTYP">DFT Functional:</label>
+        <select id="DFTTYP">
+            <option value="NONE">NONE</option>
+            <option value="B3LYP">B3LYP</option>
+            <option value="PBE0">PBE0</option>
+            <option value="M06">M06</option>
+            <option value="wB97X-D">wB97X-D</option>
         </select>
     </div>
 
@@ -155,7 +179,6 @@
     <div id="successMessage"></div>
 
     <script>
-
 
 let fileData = "";
 const elementToAtomicNumber = {
@@ -207,6 +230,8 @@ document.getElementById('fileInput').addEventListener('change', function (e) {
             const charge = document.getElementById("charge").value;
             const basis = document.getElementById("basis").value;
             const type = document.getElementById("type").value;
+            const addon = document.getElementById("ADD ONS").value;
+            const dfttyp = document.getElementById("DFTTYP").value;
 
             let basisContent = "";
             if (basis === "STO-3G") {
@@ -215,19 +240,28 @@ document.getElementById('fileInput').addEventListener('change', function (e) {
                 basisContent = "$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END";
             } else if (basis === "aug-cc-pVDZ") {
                 basisContent = "$BASIS GBASIS=ACCD $END";
+            } else if (basis === "AM1") {
+                basisContent = "$BASIS GBASIS=AM1 $END";
+            } else if (basis === "PM3") {
+                basisContent = "$BASIS GBASIS=PM3 $END";
+            } else if (basis === "PM6") {
+                basisContent = "$BASIS GBASIS=PM6 $END";
+            } else if (basis === "N311") {
+                basisContent = "$BASIS GBASIS=N311 NGAUSS=6 NDFUNC=1 $END";
             } else {
                 alert("Invalid basis selected.");
                 return;
             }
+            
+            let addoncontent = "";
+            if (addon === "IR") {
+                addoncontent = "\n $FORCE METHOD=SEMINUM NVIB=2 $END \n $STATPT IHREP=0 HSSEND=.TRUE.  $END";
 
-            let typeContent = "";
-            if (type === "Energy") {
-                typeContent = "ENERGY";
-            } else if (type === "Optimization") {
-                typeContent = "OPTIMIZE";
-            } else {
-                alert("Invalid basis selected.");
-                return;
+            }
+
+            let dftcontent ="";
+            if (dfttyp!="NONE"){
+                let dftcontent=`\n  DFTTYP=${dfttyp}`;
             }
 
             if (!fileData) {
@@ -235,11 +269,11 @@ document.getElementById('fileInput').addEventListener('change', function (e) {
                 return;
             }
 
-            const template = ` $CONTRL SCFTYP=${scftyp} MAXIT=200 RUNTYP=${typeContent}
+            const template = ` $CONTRL SCFTYP=${scftyp} MAXIT=200 RUNTYP=${type}
  COORD=UNIQUE MULT=${mult} 
- ICHARG=${charge}  
+ ICHARG=${charge}${dftcontent}  
  $END
- $SYSTEM TIMLIM=2879 MWORDS=250 $END
+ $SYSTEM TIMLIM=2879 MWORDS=250 $END${addoncontent}
  ${basisContent}
  $DATA
 
