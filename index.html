@@ -7,53 +7,61 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            margin: 20px;
+            margin: 40px;
             padding: 0;
             background: linear-gradient(to bottom, #ffffff, #f0f8ff);
             color: #333;
+            line-height: 1.6;
         }
 
         h1 {
             text-align: center;
             color: #4b0082;
-            font-size: 2.5em;
+            font-size: 2.8em;
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
+            margin: 40px 20px 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         label {
             display: block;
             font-weight: bold;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 1.1em;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.1);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         input:focus, select:focus {
             border-color: #4b0082;
-            box-shadow: 0 0 8px rgba(75, 0, 130, 0.5);
+            box-shadow: 0 0 10px rgba(75, 0, 130, 0.5);
             outline: none;
         }
 
         input[type="file"] {
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #ddd;
             background-color: #f8f9fa;
             transition: background-color 0.3s ease;
+            border-radius: 6px;
         }
 
         input[type="file"]:hover {
@@ -62,43 +70,45 @@
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             font-size: 16px;
             background: linear-gradient(to right, #6a5acd, #4b0082);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         button:hover {
             background: linear-gradient(to right, #4b0082, #6a5acd);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         button:active {
             background: linear-gradient(to right, #483d8b, #4b0082);
-            transform: translateY(1px);
+            transform: translateY(2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
         #successMessage {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 25px;
+            padding: 18px;
             background: linear-gradient(to right, #d4edda, #c3e6cb);
             color: #155724;
             border: 1px solid #155724;
-            border-radius: 6px;
+            border-radius: 8px;
             display: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.5s ease;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-15px);
             }
             to {
                 opacity: 1;
@@ -125,7 +135,7 @@
 
     <div class="form-group">
         <label for="charge">Charge:</label>
-        <input type="number" id="charge" value="1" min="0">
+        <input type="number" id="charge" value="0" min="0">
     </div>
 
     <div class="form-group">
