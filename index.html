@@ -210,7 +210,7 @@ document.getElementById('fileInput').addEventListener('change', function (e) {
 
             let basisContent = "";
             if (basis === "STO-3G") {
-                basisContent = "$BASIS  GBASIS=N31 NGAUSS=6\nNDFUNC=1   NPFUNC=0  $END";
+                basisContent = "$BASIS  GBASIS=STO NGAUSS=3 $END";
             } else if (basis === "6-31G*") {
                 basisContent = "$BASIS GBASIS=N31 NGAUSS=6 NDFUNC=1 $END";
             } else if (basis === "aug-cc-pVDZ") {
